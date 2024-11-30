@@ -1,5 +1,3 @@
-import "./CartWidget.css";
-
 export default function CartWidget({ amount }) {
 
     return (
