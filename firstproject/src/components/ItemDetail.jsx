@@ -1,6 +1,18 @@
 import { Link } from "react-router-dom"
+import ItemCount from "./ItemCount"
+import { useCart } from "../hooks/useCart"
 
-export default function ItemDetail({ name, img, description, category, price, stock }) {
+export default function ItemDetail({ id, name, img, description, category, price, stock }) {
+
+    const {addItem, isInCart} = useCart()
+
+    const handleAdd = (count) => {
+        const productToAdd = {
+            id, name, price, quantity: count
+        }
+
+        addItem(productToAdd)
+    }
 
     return (
         <div className="card text-center mx-auto" style={{ width: "80%"}}>
@@ -16,11 +28,16 @@ export default function ItemDetail({ name, img, description, category, price, st
                 <div className="card-body">
                     <p style={{ whiteSpace: "pre-line" }}>{description}</p>
                     <p>Category: {category}</p>
-                    <p>Price: $ {price}</p>
+                    <p>Price: ${price}</p>
                     <p>Stock: {stock}</p>
                 </div>
-                <Link to="/cart" className="btn btn-primary" style={{ width: "18rem", marginBottom:16 }}>Add to cart</Link>
-
+                {
+                    isInCart(id) ? (
+                        <Link to="/cart">Purchase</Link>
+                    ) : (
+                        <ItemCount stock={stock} onAdd={handleAdd}/>
+                    )
+                }
             </div>
         </div>
     )

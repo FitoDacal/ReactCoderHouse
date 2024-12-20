@@ -1,6 +1,7 @@
 import Item from "./Item";
+import {memo} from "react"; 
 
-export default function ItemList ({products}) {
+function ItemList ({products}) {
 
     return (
         <div className=" d-flex flex-wrap justify-content-center">
@@ -8,3 +9,5 @@ export default function ItemList ({products}) {
         </div>
     )
 }
+
+export default memo(ItemList)
