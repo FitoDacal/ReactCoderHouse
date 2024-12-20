@@ -4,71 +4,72 @@ import { addDoc, collection, documentId, getDocs, query, where, writeBatch } fro
 import { db } from "../services/firebase";
 
 export default function Checkout() {
-
-    const [orderCreated, setOrderCreated] = useState(false)
+    const [orderCreated, setOrderCreated] = useState(false);
 
     const { cart, totalQuantity, getTotal, clearCart } = useCart();
-    const total = getTotal()
+    const total = getTotal(); // Total calculado
+    const totalItems = totalQuantity(); // Llama a la función para obtener el valor
 
     const createOrder = async () => {
         try {
             const objOrder = {
                 buyer: {
-                    firstName: "Matias",
-                    lastName: "Perez",
-                    phone: "12345678",
-                    address: "Calle falsa 123",
-                    email: "dHs2o@example.com"
+                    firstName: "Adolfo",
+                    lastName: "Dacal",
+                    phone: "34265345634",
+                    address: "La Rioja",
+                    email: "example@gmail.com",
                 },
                 items: cart,
-                totalQuantity,
+                totalQuantity: totalItems, // Usa el valor calculado
                 total,
-                date: new Date()
-            }
+                date: new Date(),
+            };
 
-            const ids = cart.map((item) => item.id)
-            const productRef = collection(db, "products")
+            const ids = cart.map((item) => item.id);
+            const productRef = collection(db, "products");
 
             const productsAddedFromFirestore = await getDocs(
-                query(productRef, where(documentId(), "in", ids)))
+                query(productRef, where(documentId(), "in", ids))
+            );
 
-            const { docs } = productsAddedFromFirestore
+            const { docs } = productsAddedFromFirestore;
 
-            const outOfStock = []
+            const outOfStock = [];
 
-            const batch = writeBatch(db)
+            const batch = writeBatch(db);
 
             docs.forEach((doc) => {
-                const dataDoc = doc.data()
-                const stockDb = dataDoc.stock
+                const dataDoc = doc.data();
+                const stockDb = dataDoc.stock;
 
-                const productAddedToCart = cart.find((prod) => prod.id === doc.id)
-                const prodQuantity = productAddedToCart.quantity
+                const productAddedToCart = cart.find((prod) => prod.id === doc.id);
+                const prodQuantity = productAddedToCart.quantity;
 
                 if (stockDb >= prodQuantity) {
-                    batch.update(doc.ref, { stock: stockDb - prodQuantity })
+                    batch.update(doc.ref, { stock: stockDb - prodQuantity });
                 } else {
-                    outOfStock.push({ id: doc.id, ...dataDoc })
+                    outOfStock.push({ id: doc.id, ...dataDoc });
                 }
-            })
+            });
 
             if (outOfStock.length === 0) {
                 await batch.commit();
-                const orderRef = collection(db, "orders")
-                const orderAdded = await addDoc(orderRef, objOrder)
-                console.log(`El id de su orden es: ${orderAdded.id}`)
-                setOrderCreated(true)
-                clearCart()
+                const orderRef = collection(db, "orders");
+                const orderAdded = await addDoc(orderRef, objOrder);
+                console.log(`El id de su orden es: ${orderAdded.id}`);
+                setOrderCreated(true);
+                clearCart();
             } else {
-                console.log("Hay productos sin stock")
+                console.log("Hay productos sin stock");
             }
         } catch (error) {
-            console.log(error)
+            console.log(error);
         }
-    }
+    };
 
     if (orderCreated) {
-        <h1>La orden fue creada correctamente</h1>
+        return <h1>The order was created successfully</h1>;
     }
 
     return (
@@ -89,8 +90,9 @@ export default function Checkout() {
                 </div>
                 <button type="submit" className="btn btn-primary">Finalize purchase order</button>
             </form> */}
-            <button onClick={createOrder} type="submit" className="btn btn-primary">Finalize purchase order</button>
+            <button onClick={createOrder} type="submit" className="btn btn-primary">
+                Finalize purchase order
+            </button>
         </div>
-
-    )
+    );
 }
