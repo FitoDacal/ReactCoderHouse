@@ -10,7 +10,13 @@ export default function Cart () {
     const total = getTotal();
 
     if(totalQuantity === 0) {
-        return <h1>The cart is empty</h1>
+        return (
+            <div className="card text-center mx-auto m-5" style={{ width: "80%"}}>
+                <h1>Cart</h1>
+                <h3>The cart is empty</h3>
+                <Link className="btn btn-primary m-2 mx-auto" to="/">Add products</Link>
+            </div>
+        )
     }
 
     return (

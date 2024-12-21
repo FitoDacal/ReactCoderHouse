@@ -3,11 +3,13 @@ import ItemList from "./ItemList";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom"
 import { db } from "../services/firebase";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function ItemListContainer() {
 
     const [products, setProducts] = useState([]);
-    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     const { categoryId } = useParams();
 
@@ -23,24 +25,28 @@ export default function ItemListContainer() {
                     return {id: doc.id, ...doc.data()}
                 });
                 setProducts(productos);
-                setError(null);
+                setLoading(false);
             })
 
             .catch(() => {
-                setError("Error fetching products. Please try again later.");
+                toast.error("Error fetching products. Please try again later.");
+                setLoading(false);
             })
     },[categoryId])
 
     return (
         <div className="d-flex flex-column">
             <h2 className="text-center p-3">Welcome to trossed!</h2>
-            {error ? (
-                <p style={{ color: "red", textAlign: "center" }}>{error}</p>
+            <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
+            {loading ? (
+                <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '60vh' }}>
+                    <h3>Loading products...</h3>
+                </div>
             ) : (
                 <div className="d-flex flex-wrap justify-content-center">
                     <ItemList products={products} />
                 </div>
             )}
         </div>
-    );
+    )
 }

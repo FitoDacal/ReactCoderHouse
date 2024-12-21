@@ -2,6 +2,8 @@ import { useState } from "react"
 import { useCart } from "../hooks/useCart";
 import { addDoc, collection, documentId, getDocs, query, where, writeBatch } from "firebase/firestore";
 import { db } from "../services/firebase";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Checkout() {
     const [name, setName] = useState("");
@@ -11,13 +13,23 @@ export default function Checkout() {
 
     const [loading, setLoading] = useState(false);
 
-    const [orderCreated, setOrderCreated] = useState(false);
-
     const { cart, totalQuantity, getTotal, clearCart } = useCart();
     const total = getTotal();
 
+    const validateForm = () => {
+        if (!name || !lastName || !phone || !address) {
+            toast.warn("Please fill in all the fields.");
+            return false;
+        }
+        return true;
+    };
+
     const createOrder = async () => {
+        if (!validateForm()) return;
+
+
         setLoading(true);
+        toast.info("Generating your order, please wait...");
         try {
             const objOrder = {
                 buyer: {
@@ -63,30 +75,23 @@ export default function Checkout() {
                 await batch.commit();
                 const orderRef = collection(db, "orders");
                 const orderAdded = await addDoc(orderRef, objOrder);
-                console.log(`El id de su orden es: ${orderAdded.id}`);
-                setOrderCreated(true);
+                toast.success(`Order created successfully! ID: ${orderAdded.id}`);
                 clearCart();
             } else {
-                console.log("Hay productos sin stock");
+                toast.error("Some products are out of stock!");
             }
         } catch (error) {
-            console.log(error);
+            toast.error("An error occurred while creating your order. Please try again.");  
         } finally {
             setLoading(false);
         }
     };
 
-    if (loading) {
-        return <h1>The order is being generated</h1>;
-    }
-
-    if (orderCreated) {
-        return <h1>The order was created successfully</h1>;
-    }
-    
     return (
         <div>
             <h1 className="text-center">Checkout</h1>
+            <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
+
             <div className="mb-3">
                 <label htmlFor="name" className="form-label">Name</label>
                 <input onChange={(e) => setName(e.target.value)} value={name} className="form-control"/>
@@ -115,7 +120,7 @@ export default function Checkout() {
                 ))}
             </div>
             <div className="d-flex justify-content-center p-3 ">
-                <button onClick={createOrder} type="submit" className="btn btn-primary">Finalize purchase order</button>
+                <button onClick={createOrder} type="submit" className="btn btn-primary" disabled={loading}>{loading ? "Processing..." : "Finalize purchase order"}</button>
             </div>
         </div>
     );
