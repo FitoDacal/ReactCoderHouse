@@ -33,7 +33,7 @@ export default function ItemListContainer() {
 
     return (
         <div className="d-flex flex-column">
-            <h2 className="text-center">Welcome to trossed!</h2>
+            <h2 className="text-center p-3">Welcome to trossed!</h2>
             {error ? (
                 <p style={{ color: "red", textAlign: "center" }}>{error}</p>
             ) : (

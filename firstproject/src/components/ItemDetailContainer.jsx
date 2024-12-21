@@ -25,7 +25,7 @@ export default function ItemDetailContainer() {
 
     return (
         <div>
-            <h2>Product details</h2>
+            <h2 className="text-center p-3">PRODUCT DETAILS</h2>
             {error ? (
                 <p style={{ color: "red" }}>{error}</p>
             ) : (

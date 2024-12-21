@@ -14,7 +14,7 @@ export const CartProvider = ({children}) => {
         if (!isInCart(productToAdd.id)) {
             setCart((prev) => [...prev, productToAdd])
         } else {
-            console.log("El producto ya se encuentra en el carrito")
+            console.log("The product is already in the cart")
         }
     }
 
@@ -37,15 +37,7 @@ export const CartProvider = ({children}) => {
         return accu
     }
 
-    const getTotalQuantity = () => {
-        let accu = 0;
-
-        cart.forEach((item) => {
-            accu += item.quantity;
-        })
-
-        return accu
-    }
+    const getTotalQuantity = cart.reduce((acc, item) => acc + item.quantity, 0);
 
     const totalQuantity = getTotalQuantity;
 

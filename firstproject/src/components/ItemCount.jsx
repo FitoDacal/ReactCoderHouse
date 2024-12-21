@@ -23,7 +23,7 @@ export default function ItemCount({stock, initial=1, onAdd}) {
                 <h3>{count}</h3>
                 <button className="btn btn-secondary mx-2" onClick={sumar}>+</button>
             </div>
-            <button onClick={() => onAdd(count)}>Add to cart</button>
+            <button className="btn btn-secondary" onClick={() => onAdd(count)}>Add to cart</button>
         </div>
     )
 }

@@ -31,13 +31,15 @@ export default function ItemDetail({ id, name, img, description, category, price
                     <p>Price: ${price}</p>
                     <p>Stock: {stock}</p>
                 </div>
-                {
-                    isInCart(id) ? (
-                        <Link to="/cart">Purchase</Link>
-                    ) : (
-                        <ItemCount stock={stock} onAdd={handleAdd}/>
-                    )
-                }
+                <div className="card-body">
+                    {
+                        isInCart(id) ? (
+                            <Link className="btn btn-secondary" to="/cart">Purchase</Link>
+                        ) : (
+                            <ItemCount stock={stock} onAdd={handleAdd}/>
+                        )
+                    }
+                </div>
             </div>
         </div>
     )

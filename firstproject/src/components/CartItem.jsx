@@ -9,12 +9,12 @@ export default function CartItem ({id, name, quantity, price}) {
     }
 
     return (
-        <div>
+        <div className="card-body p-4">
             <h2>{name}</h2>
             <p>Quantity: {quantity}</p>
             <p>Price per unity: ${price}</p>
             <p>Total price: ${price * quantity}</p>
-            <button onClick={() => handleRemove(id)}>Remove Item</button>
+            <button className="btn btn-outline-danger" onClick={() => handleRemove(id)}>Remove Item</button>
         </div>
     )
 }
